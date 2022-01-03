@@ -1,0 +1,42 @@
+---
+- name: Installing Apache
+  hosts: tag_Name_web
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Installing
+      apt:
+        name: apache2
+        state: present
+    - name: copy the webpage index.html
+      copy:
+        src: /home/ubuntu/index.html
+        dest: /var/www/html/index.html
+    - name: start apache2
+      service:
+        name: apache2
+        state: started
+    - name: copy pem file
+      copy:
+        src: /home/ubuntu/vpc.pem
+        dest: /home/ubuntu/vpc.pem
+ 
+- name: Installing MySQL DB
+  hosts: tag_Name_DB_Server
+  remote_user: ubuntu
+  become: yes
+  become_method: sudo
+  gather_facts: false
+  tasks:     
+    - name: Update all packages to their latest version
+      apt:
+        name: "*"
+        state: latest
+    - name: MYSQL DB creation
+      apt:
+        name: mysql-server
+        state: latest
+    - name: Start MySQL service
+      service:
+        name: mysql
+        state: started
